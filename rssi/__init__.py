@@ -3,6 +3,7 @@ name = "rssi"
 from subprocess import Popen, PIPE # Used to run native OS commads in python wrapped subproccess
 import numpy # Used for matrix operations in localization algorithm
 from sys import version_info # Used to check the Python-interpreter version at runtime
+import re
 
 # RSSI_Scan
     # Use:
@@ -107,7 +108,7 @@ class RSSI_Scan(object):
             # '43/70'
     @staticmethod
     def getQuality(raw_cell):
-        quality = raw_cell.split('Quality=')[1]
+        quality = re.split('Quality=|Quality:', raw_cell)[1]
         quality = quality.split(' ')[0]
         return quality
 
@@ -130,8 +131,8 @@ class RSSI_Scan(object):
             # '-67'    
     @staticmethod
     def getSignalLevel(raw_cell):
-        signal = raw_cell.split('Signal level=')[1]
-        signal = int(signal.split(' ')[0])
+        signal = re.split('Signal level=|Signal level:', raw_cell)[1]
+        signal = signal.split(' ')[0]
         return signal
 
     # getMacAddress
@@ -181,7 +182,7 @@ class RSSI_Scan(object):
         cell = {
             'ssid': self.getSSID(raw_cell),
             'quality': self.getQuality(raw_cell),
-            'signal': self.getSignalLevel(raw_cell)
+            'signal': self.getSignalLevel(raw_cell),
             'mac': self.getMacAddress(raw_cell)
         }
         return cell
